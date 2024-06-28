@@ -184,8 +184,12 @@ class CheckerBoard:
 
 
 
+
 def save_animation(body_pose, savepath, bm, fps = 60, resolution = (800,800)):
     imw, imh = resolution
+    egl_display = create_initialized_headless_egl_display()
+    if egl_display == egl.EGL_NO_DISPLAY:
+        raise ImportError('Cannot initialize a headless EGL display.')
     mv = MeshViewer(width=imw, height=imh, use_offscreen=True)
     faces = c2c(bm.f)
     img_array = []

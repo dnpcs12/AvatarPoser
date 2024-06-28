@@ -24,7 +24,7 @@ from data.select_dataset import define_Dataset
 from models.select_model import define_Model
 from utils import utils_transform
 import pickle
-from utils import utils_visualize as vis
+#from utils import utils_visualize as vis
 
 save_animation = False
 resolution = (800,800)
@@ -224,13 +224,15 @@ def main(json_path='options/train_avatarposer.json'):
                             os.makedirs(video_dir)
 
                         save_video_path_gt = os.path.join(video_dir, 'gt.avi')
-                        if not os.path.exists(save_video_path_gt):
-                            vis.save_animation(body_pose=gt_body, savepath=save_video_path_gt, bm = model.bm, fps=60, resolution = resolution)
-
-                        save_video_path = os.path.join(video_dir, '{:d}.avi'.format(current_step))
-                        vis.save_animation(body_pose=predicted_body, savepath=save_video_path, bm = model.bm, fps=60, resolution = resolution)
-
-
+                        '''
+                        --------------------------------------soobin 지움-------------------------------------------------------------
+                        
+                        # if not os.path.exists(save_video_path_gt):
+                        #     vis.save_animation(body_pose=gt_body, savepath=save_video_path_gt, bm = model.bm, fps=60, resolution = resolution)
+                        #
+                        # save_video_path = os.path.join(video_dir, '{:d}.avi'.format(current_step))
+                        # vis.save_animation(body_pose=predicted_body, savepath=save_video_path, bm = model.bm, fps=60, resolution = resolution)
+                        '''
                     predicted_position = predicted_position#.cpu().numpy()
                     gt_position = gt_position#.cpu().numpy()
 
