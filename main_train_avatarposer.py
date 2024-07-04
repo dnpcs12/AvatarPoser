@@ -22,6 +22,7 @@ from utils import utils_logger
 from utils import utils_option as option
 from data.select_dataset import define_Dataset
 from models.select_model import define_Model
+from torch.utils.tensorboard import SummaryWriter
 from utils import utils_transform
 import pickle
 #from utils import utils_visualize as vis
@@ -90,6 +91,8 @@ def main(json_path='options/train_avatarposer.json'):
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
 
+    # TensorBoard writer setup
+    writer = SummaryWriter(log_dir=os.path.join(opt['path']['log'], 'tensorboard'))
 
     '''
     # ----------------------------------------
@@ -143,7 +146,7 @@ def main(json_path='options/train_avatarposer.json'):
     # Step--4 (main training)
     # ----------------------------------------
     '''
-    for epoch in range(1000000):  # keep running
+    for epoch in range(20000):  # keep running
         for i, train_data in enumerate(train_loader):
 
             current_step += 1
@@ -261,7 +264,10 @@ def main(json_path='options/train_avatarposer.json'):
 
                 # testing log
                 logger.info('<epoch:{:3d}, iter:{:8,d}, Average positional error [cm]: {:<.5f}, Average velocity error [cm/s]: {:<.5f}, Average positional error at hand [cm]: {:<.5f}\n'.format(epoch, current_step,pos_error*100, vel_error*100, pos_error_hands*100))
-
+                # Log the test errors to TensorBoard
+                writer.add_scalar('Test/Positional_Error', pos_error * 100, current_step)
+                writer.add_scalar('Test/Velocity_Error', vel_error * 100, current_step)
+                writer.add_scalar('Test/Positional_Error_Hands', pos_error_hands * 100, current_step)
 
     logger.info('Saving the final model.')
     model.save('latest')

@@ -59,7 +59,7 @@ class AMASS_Dataset(Dataset):
             data = pickle.load(f)
 
         if self.opt['phase'] == 'train':
-            while data['rotation_local_full_gt_list'].shape[0] <self.window_size:
+            while data['rotation_local_full_gt_list'].shape[0] < self.window_size + 1:
                 idx = random.randint(0,idx)
                 filename = self.filename_list[idx]
                 with open(filename, 'rb') as f:
@@ -73,7 +73,7 @@ class AMASS_Dataset(Dataset):
 
 
         if self.opt['phase'] == 'train':
-            
+            #print(self.window_size, hmd_position_global_full_gt_list.shape[0], data['rotation_local_full_gt_list'].shape[0])
             frame = np.random.randint(hmd_position_global_full_gt_list.shape[0] - self.window_size + 1 - 1)
             input_hmd  = hmd_position_global_full_gt_list[frame:frame + self.window_size+1,...].reshape(self.window_size+1, -1).float()
             output_gt = rotation_local_full_gt_list[frame + self.window_size - 1 : frame + self.window_size - 1 + 1,...].float()

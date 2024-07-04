@@ -20,8 +20,8 @@ from utils import utils_option as option
 from data.select_dataset import define_Dataset
 from models.select_model import define_Model
 from utils import utils_visualize as vis
-
-save_animation = True
+import pickle
+save_animation = False
 resolution = (800,800)
 
 def main(json_path='options/test_avatarposer.json'):
@@ -115,6 +115,8 @@ def main(json_path='options/test_avatarposer.json'):
     vel_error = []
     pos_error_hands = []
 
+    gt_positions = []
+    predicted_positions = []
     for index, test_data in enumerate(test_loader):
         logger.info("testing the sample {}/{}".format(index, len(test_loader)))
 
@@ -128,11 +130,13 @@ def main(json_path='options/test_avatarposer.json'):
         predicted_position = body_parms_pred['position']
         predicted_body = body_parms_pred['body']
 
+        predicted_positions.append(predicted_position.cpu().numpy())
+
         gt_angle = body_parms_gt['pose_body']
         gt_position = body_parms_gt['position']
         gt_body = body_parms_gt['body']
 
-
+        gt_positions.append(gt_position.cpu().numpy())
 
         if index in [0, 10, 20] and save_animation:
             video_dir = os.path.join(opt['path']['images'], str(index))
@@ -167,7 +171,10 @@ def main(json_path='options/test_avatarposer.json'):
         pos_error_hands.append(pos_error_hands_)
 
 
-
+    result_dict = {"output": predicted_positions, 'gt': gt_positions}
+    with open('result.pkl', 'wb') as f:
+        pickle.dump(result_dict, f)
+        print("save result at : ","result.pkl")
     pos_error = sum(pos_error)/len(pos_error)
     vel_error = sum(vel_error)/len(vel_error)
     pos_error_hands = sum(pos_error_hands)/len(pos_error_hands)
@@ -175,6 +182,7 @@ def main(json_path='options/test_avatarposer.json'):
 
     # testing log
     logger.info('Average positional error [cm]: {:<.5f}, Average velocity error [cm/s]: {:<.5f}, Average positional error at hand [cm]: {:<.5f}\n'.format(pos_error*100, vel_error*100, pos_error_hands*100))
+
 
 
 if __name__ == '__main__':

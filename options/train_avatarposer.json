@@ -1,5 +1,5 @@
 {
-  "task": "AvatarPoseEstimation"  //  root/task/videos-models-options
+  "task": "AvatarPose2"  //  root/task/videos-models-options
   , "model": "avatarposer" // "plain"
   , "gpu_ids": [0]
 
